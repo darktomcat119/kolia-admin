@@ -13,6 +13,31 @@ const DAY_LABELS: Record<string, string> = {
 };
 const CUISINE_OPTIONS = Object.entries(CUISINE_LABELS) as [CuisineType, string][];
 
+function normalizeGalleryUrls(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed: unknown = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+      }
+    } catch {
+      // Not JSON, fall back to comma-separated values
+    }
+    return trimmed
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+  }
+
+  return [];
+}
+
 const EMPTY_RESTAURANT: Partial<Restaurant> = {
   name: '',
   description: '',
@@ -68,7 +93,7 @@ export function RestaurantEdit() {
         .then(({ data, error }) => {
           if (data && !error) {
             const row = data as Record<string, unknown>;
-            const gallery_urls = Array.isArray(row.gallery_urls) ? row.gallery_urls as string[] : [];
+            const gallery_urls = normalizeGalleryUrls(row.gallery_urls);
             setForm({ ...row, gallery_urls } as Restaurant);
           }
           setLoading(false);
@@ -166,7 +191,7 @@ export function RestaurantEdit() {
   const removeGalleryImage = (index: number) => {
     setForm((prev) => ({
       ...prev,
-      gallery_urls: (prev.gallery_urls ?? []).filter((_, i) => i !== index),
+      gallery_urls: normalizeGalleryUrls(prev.gallery_urls).filter((_, i) => i !== index),
     }));
   };
 
@@ -177,7 +202,7 @@ export function RestaurantEdit() {
       new URL(url);
       setForm((prev) => ({
         ...prev,
-        gallery_urls: [...(prev.gallery_urls ?? []), url],
+        gallery_urls: [...normalizeGalleryUrls(prev.gallery_urls), url],
       }));
       setGalleryUrlInput('');
       setError('');
@@ -229,10 +254,14 @@ export function RestaurantEdit() {
     setSaving(true);
 
     try {
+      const payload = {
+        ...form,
+        gallery_urls: normalizeGalleryUrls(form.gallery_urls),
+      };
       if (isNew) {
-        await api.post('/api/admin/restaurants', form);
+        await api.post('/api/admin/restaurants', payload);
       } else {
-        await api.patch(`/api/admin/restaurants/${id}`, form);
+        await api.patch(`/api/admin/restaurants/${id}`, payload);
       }
       navigate('/restaurants');
     } catch (err) {
@@ -249,6 +278,8 @@ export function RestaurantEdit() {
       </div>
     );
   }
+
+  const galleryUrls = normalizeGalleryUrls(form.gallery_urls);
 
   return (
     <div>
@@ -390,7 +421,7 @@ export function RestaurantEdit() {
                     )}
                   </div>
                   {form.image_url && (
-                    <img src={form.image_url} alt="Aperçu couverture" className="mt-3 h-28 w-full object-cover rounded-xl border border-border-light" />
+                    <img src={form.image_url} alt="Aperçu couverture" className="mt-3 h-20 w-full object-cover rounded-xl border border-border-light" />
                   )}
                   <p className="text-xs text-[#9C9690] font-body mt-2">Ou URL de l&apos;image de couverture</p>
                   <input
@@ -436,7 +467,7 @@ export function RestaurantEdit() {
                     )}
                   </div>
                   {form.logo_url && (
-                    <img src={form.logo_url} alt="Aperçu logo" className="mt-3 h-20 w-20 object-contain rounded-xl border border-border-light" />
+                    <img src={form.logo_url} alt="Aperçu logo" className="mt-3 h-14 w-14 object-contain rounded-xl border border-border-light bg-[#F7F7F5]" />
                   )}
                   <p className="text-xs text-[#9C9690] font-body mt-2">Ou URL du logo</p>
                   <input
@@ -451,21 +482,28 @@ export function RestaurantEdit() {
                 {/* Gallery / sub images */}
                 <div>
                   <label className="block text-sm font-medium text-[#6B6560] font-body mb-2">Images supplémentaires (galerie)</label>
-                  <div className="flex flex-wrap gap-3 mb-3">
-                    {(form.gallery_urls ?? []).map((url, index) => (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 mb-3">
+                    {galleryUrls.map((url, index) => (
                       <div key={`${url}-${index}`} className="relative group">
-                        <img src={url} alt="" className="h-20 w-20 object-cover rounded-xl border border-border-light" />
+                        <img
+                          src={url}
+                          alt={`Galerie ${index + 1}`}
+                          className="h-14 w-full object-cover rounded-lg border border-border-light bg-[#F7F7F5]"
+                        />
                         <button
                           type="button"
                           onClick={() => removeGalleryImage(index)}
-                          className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-90 hover:opacity-100 shadow"
+                          className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-90 hover:opacity-100 shadow"
                           aria-label="Supprimer"
                         >
-                          <X size={14} />
+                          <X size={12} />
                         </button>
                       </div>
                     ))}
                   </div>
+                  {galleryUrls.length > 0 && (
+                    <p className="text-xs text-[#9C9690] font-body mb-2">{galleryUrls.length} image(s) dans la galerie</p>
+                  )}
                   <input
                     ref={galleryInputRef}
                     type="file"
