@@ -447,28 +447,35 @@ export function RestaurantEdit() {
                       e.target.value = '';
                     }}
                   />
-                  <div
-                    onDrop={(e) => handleDrop(e, 'logo')}
-                    onDragOver={(e) => handleDragOver(e, 'logo')}
-                    onDragLeave={(e) => handleDragLeave(e, 'logo')}
-                    onClick={() => logoInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-colors ${dragLogo ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/60 hover:bg-[#FAFAF7]'}`}
-                  >
-                    {uploadingLogo ? (
-                      <div className="flex items-center justify-center gap-2 text-primary font-body text-sm">
-                        <Loader2 size={18} className="animate-spin" />
-                        <span>Upload en cours…</span>
-                      </div>
-                    ) : (
-                      <>
-                        <Upload size={24} className="mx-auto text-[#9C9690] mb-1.5" />
-                        <p className="text-sm font-body text-[#6B6560]">Cliquez ou glissez-déposez un logo (JPEG, PNG, WebP — max 5 Mo)</p>
-                      </>
-                    )}
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                    <div
+                      onDrop={(e) => handleDrop(e, 'logo')}
+                      onDragOver={(e) => handleDragOver(e, 'logo')}
+                      onDragLeave={(e) => handleDragLeave(e, 'logo')}
+                      onClick={() => logoInputRef.current?.click()}
+                      className={`flex-1 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${dragLogo ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/60 hover:bg-[#FAFAF7]'}`}
+                    >
+                      {uploadingLogo ? (
+                        <div className="flex items-center justify-center gap-2 text-primary font-body text-sm">
+                          <Loader2 size={18} className="animate-spin" />
+                          <span>Upload en cours…</span>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload size={22} className="mx-auto text-[#9C9690] mb-1.5" />
+                          <p className="text-sm font-body text-[#6B6560]">Cliquez ou glissez-déposez un logo (JPEG, PNG, WebP — max 5 Mo)</p>
+                        </>
+                      )}
+                    </div>
+                    <div className="sm:w-[88px] shrink-0">
+                      <p className="text-xs text-[#9C9690] font-body mb-1">Aperçu</p>
+                      {form.logo_url ? (
+                        <img src={form.logo_url} alt="Aperçu logo" className="h-16 w-16 object-contain rounded-xl border border-border-light bg-[#F7F7F5]" />
+                      ) : (
+                        <div className="h-16 w-16 rounded-xl border border-dashed border-border-light bg-[#F7F7F5]" />
+                      )}
+                    </div>
                   </div>
-                  {form.logo_url && (
-                    <img src={form.logo_url} alt="Aperçu logo" className="mt-3 h-14 w-14 object-contain rounded-xl border border-border-light bg-[#F7F7F5]" />
-                  )}
                   <p className="text-xs text-[#9C9690] font-body mt-2">Ou URL du logo</p>
                   <input
                     type="url"
