@@ -12,6 +12,13 @@ const DAY_LABELS: Record<string, string> = {
   friday: 'Vendredi', saturday: 'Samedi', sunday: 'Dimanche',
 };
 const CUISINE_OPTIONS = Object.entries(CUISINE_LABELS) as [CuisineType, string][];
+const ADDRESS_DEBOUNCE_MS = 450;
+
+type AddressSuggestion = {
+  displayName: string;
+  latitude: number;
+  longitude: number;
+};
 
 function normalizeGalleryUrls(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -79,6 +86,10 @@ export function RestaurantEdit() {
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [dragGallery, setDragGallery] = useState(false);
   const [galleryUrlInput, setGalleryUrlInput] = useState('');
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [addressSearching, setAddressSearching] = useState(false);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
+  const addressDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
@@ -100,6 +111,61 @@ export function RestaurantEdit() {
         });
     }
   }, [id, isNew]);
+
+  useEffect(() => {
+    const query = (form.address ?? '').trim();
+
+    if (addressDebounceRef.current) {
+      clearTimeout(addressDebounceRef.current);
+    }
+
+    if (query.length < 3) {
+      setAddressSuggestions([]);
+      setAddressSearching(false);
+      return;
+    }
+
+    addressDebounceRef.current = setTimeout(async () => {
+      setAddressSearching(true);
+      try {
+        const params = new URLSearchParams({
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6',
+        });
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
+        if (!res.ok) {
+          setAddressSuggestions([]);
+          return;
+        }
+
+        const data = (await res.json()) as Array<{
+          display_name?: string;
+          lat?: string;
+          lon?: string;
+        }>;
+
+        const suggestions = (data || [])
+          .filter((item) => item.display_name && item.lat && item.lon)
+          .map((item) => ({
+            displayName: item.display_name as string,
+            latitude: Number(item.lat),
+            longitude: Number(item.lon),
+          }));
+
+        setAddressSuggestions(suggestions);
+      } catch {
+        setAddressSuggestions([]);
+      } finally {
+        setAddressSearching(false);
+      }
+    }, ADDRESS_DEBOUNCE_MS);
+
+    return () => {
+      if (addressDebounceRef.current) clearTimeout(addressDebounceRef.current);
+    };
+  }, [form.address]);
 
   const updateField = <K extends keyof Restaurant>(
     key: K,
@@ -573,14 +639,46 @@ export function RestaurantEdit() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Adresse *</label>
+                  <div className="relative">
                   <input
                     type="text"
                     value={form.address ?? ''}
-                    onChange={(e) => updateField('address', e.target.value)}
+                    onChange={(e) => {
+                      updateField('address', e.target.value);
+                      setShowAddressSuggestions(true);
+                    }}
+                    onFocus={() => setShowAddressSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowAddressSuggestions(false), 150)}
                     required
-                    placeholder="12 rue des Saveurs"
+                    placeholder="Adresse complète (ex: 12 rue des Saveurs)"
                     className="w-full px-4 py-3 rounded-xl border border-border font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                   />
+                  {addressSearching && (
+                    <div className="absolute right-3 top-3.5 text-xs text-[#9C9690] font-body">Recherche...</div>
+                  )}
+                  {showAddressSuggestions && addressSuggestions.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full max-h-56 overflow-auto rounded-xl border border-border-light bg-white shadow-lg">
+                      {addressSuggestions.map((item, index) => (
+                        <button
+                          key={`${item.latitude}-${item.longitude}-${index}`}
+                          type="button"
+                          onClick={() => {
+                            updateField('address', item.displayName);
+                            updateField('latitude', item.latitude);
+                            updateField('longitude', item.longitude);
+                            setShowAddressSuggestions(false);
+                          }}
+                          className="w-full text-left px-3 py-2.5 text-sm font-body text-[#4A4642] hover:bg-[#F7F7F5] border-b last:border-b-0 border-border-light"
+                        >
+                          {item.displayName}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  </div>
+                  <p className="mt-1 text-xs text-[#9C9690] font-body">
+                    Renseignez le numéro, la rue et des détails utiles (bâtiment, étage, etc.) si nécessaire.
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
