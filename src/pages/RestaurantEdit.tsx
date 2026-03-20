@@ -97,10 +97,15 @@ export function RestaurantEdit() {
   };
 
   const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
   const handleImageUpload = async (file: File, type: 'cover' | 'logo' | 'gallery') => {
     if (!file || !ALLOWED_IMAGE_TYPES.includes(file.type)) {
       setError('Format accepté : JPEG, PNG ou WebP');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setError('Image trop lourde (max 5 Mo)');
       return;
     }
     if (type === 'cover') setUploadingCover(true);
@@ -123,6 +128,38 @@ export function RestaurantEdit() {
       if (type === 'cover') setUploadingCover(false);
       else if (type === 'logo') setUploadingLogo(false);
       else setUploadingGallery(false);
+    }
+  };
+
+  const handleGalleryBatchUpload = async (files: FileList | File[]) => {
+    const list = Array.from(files);
+    if (list.length === 0) return;
+
+    const invalidType = list.find((f) => !ALLOWED_IMAGE_TYPES.includes(f.type));
+    if (invalidType) {
+      setError('Format accepté : JPEG, PNG ou WebP');
+      return;
+    }
+    const oversized = list.find((f) => f.size > MAX_FILE_SIZE);
+    if (oversized) {
+      setError('Une ou plusieurs images dépassent 5 Mo');
+      return;
+    }
+
+    setUploadingGallery(true);
+    setError('');
+    try {
+      const uploaded = await Promise.all(
+        list.map((file) => api.uploadRestaurantImage(file, 'gallery'))
+      );
+      setForm((prev) => ({
+        ...prev,
+        gallery_urls: [...(prev.gallery_urls ?? []), ...uploaded.map((u) => u.url)],
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'upload");
+    } finally {
+      setUploadingGallery(false);
     }
   };
 
@@ -154,6 +191,10 @@ export function RestaurantEdit() {
     if (type === 'cover') setDragCover(false);
     else if (type === 'logo') setDragLogo(false);
     else setDragGallery(false);
+    if (type === 'gallery') {
+      handleGalleryBatchUpload(e.dataTransfer.files);
+      return;
+    }
     const file = e.dataTransfer.files?.[0];
     if (file) handleImageUpload(file, type);
   };
@@ -428,11 +469,11 @@ export function RestaurantEdit() {
                   <input
                     ref={galleryInputRef}
                     type="file"
+                    multiple
                     accept="image/jpeg,image/png,image/webp"
                     className="hidden"
                     onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleImageUpload(f, 'gallery');
+                      if (e.target.files?.length) handleGalleryBatchUpload(e.target.files);
                       e.target.value = '';
                     }}
                   />
