@@ -14,8 +14,11 @@ const FLOATING_PARTICLES = [
   { size: 2, top: '85%', left: '15%', delay: '1.5s', duration: '8s' },
 ];
 
+const isEmailNotConfirmed = (msg: string) =>
+  /email not confirmed|email not verified|confirmer votre e-mail/i.test(msg);
+
 export function Login() {
-  const { signIn } = useAuth();
+  const { signIn, resendConfirmation } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +27,9 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleResetPassword = async () => {
@@ -46,15 +52,34 @@ export function Login() {
     }
   };
 
+  const handleResendConfirmation = async () => {
+    if (!email) return;
+    setResendLoading(true);
+    setError('');
+    setResendSent(false);
+    try {
+      await resendConfirmation(email);
+      setResendSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'envoi de l'e-mail.");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setEmailNotConfirmed(false);
+    setResendSent(false);
     setLoading(true);
     try {
       await signIn(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Email ou mot de passe incorrect');
+      const msg = err instanceof Error ? err.message : 'Email ou mot de passe incorrect';
+      setError(msg);
+      setEmailNotConfirmed(isEmailNotConfirmed(msg));
     } finally {
       setLoading(false);
     }
@@ -179,6 +204,24 @@ export function Login() {
               <p className="text-green-700 text-sm font-body">
                 Lien envoyé à <strong>{email}</strong>. Vérifiez votre boîte mail.
               </p>
+            </div>
+          )}
+          {emailNotConfirmed && (
+            <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 backdrop-blur-sm border border-amber-100 animate-fade-up">
+              <p className="text-amber-800 text-sm font-body mb-3">
+                Veuillez confirmer votre adresse e-mail avant de vous connecter. Vérifiez votre boîte de réception.
+              </p>
+              <button
+                type="button"
+                onClick={handleResendConfirmation}
+                disabled={resendLoading}
+                className="text-sm text-primary font-semibold hover:underline disabled:opacity-50"
+              >
+                {resendLoading ? 'Envoi...' : 'Renvoyer l\'e-mail de confirmation'}
+              </button>
+              {resendSent && (
+                <p className="text-green-700 text-xs font-body mt-2">E-mail envoyé. Vérifiez votre boîte mail.</p>
+              )}
             </div>
           )}
 
