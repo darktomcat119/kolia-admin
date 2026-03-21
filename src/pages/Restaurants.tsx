@@ -52,93 +52,135 @@ function RestaurantDetailModal({
   restaurant: Restaurant;
   onClose: () => void;
 }) {
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const gallery = Array.isArray(restaurant.gallery_urls) ? restaurant.gallery_urls : [];
+  const kpi = [
+    { label: 'Frais de livraison', value: `€${Number(restaurant.delivery_fee).toFixed(2)}` },
+    { label: 'Commande minimum', value: `€${Number(restaurant.minimum_order).toFixed(2)}` },
+    { label: 'Délai', value: `${restaurant.estimated_delivery_min}–${restaurant.estimated_delivery_max} min` },
+    { label: 'Rayon', value: `${restaurant.delivery_radius_km} km` },
+    { label: 'Statut', value: restaurant.is_active ? 'Actif' : 'Inactif' },
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/45" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl w-full max-w-3xl max-h-[88vh] overflow-auto shadow-2xl border border-border-light">
-        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-border-light px-5 py-4 flex items-center justify-between">
+      <div className="absolute inset-0 bg-[#0F1011]/65 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl border border-white/60">
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-border-light px-6 py-4 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold font-body text-[#1A1A1A]">{restaurant.name}</h3>
-            <p className="text-xs text-[#9C9690] font-body">{CUISINE_LABELS[restaurant.cuisine_type]}</p>
+            <h3 className="text-xl font-semibold font-body text-[#1A1A1A] tracking-tight">{restaurant.name}</h3>
+            <p className="text-sm text-[#9C9690] font-body">{CUISINE_LABELS[restaurant.cuisine_type]}</p>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-xl border border-border text-[#6B6560] hover:bg-surface-hover transition-colors"
+            className="w-10 h-10 rounded-2xl border border-border text-[#6B6560] hover:bg-surface-hover transition-colors"
             aria-label="Fermer"
           >
             <X size={16} className="mx-auto" />
           </button>
         </div>
 
-        <div className="p-5 space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="space-y-3">
-              <div className="h-44 rounded-xl overflow-hidden border border-border-light bg-[#F7F7F5]">
+        <div className="p-6 overflow-auto max-h-[calc(90vh-76px)] space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+            <div className="xl:col-span-3 space-y-4">
+              <div className="h-60 sm:h-72 rounded-2xl overflow-hidden border border-border-light bg-[#F7F7F5]">
                 {restaurant.image_url ? (
-                  <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />
+                  <button type="button" className="w-full h-full" onClick={() => setPreviewImage(restaurant.image_url!)}>
+                    <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500" />
+                  </button>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-[#C4C0BB]">
-                    <UtensilsCrossed size={28} />
+                    <UtensilsCrossed size={34} />
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-[#6B6560] font-body">
-                <MapPin size={14} />
-                <span>{restaurant.address}, {restaurant.city}</span>
-              </div>
-              {restaurant.phone && (
-                <div className="flex items-center gap-2 text-sm text-[#6B6560] font-body">
-                  <Phone size={14} />
-                  <span>{restaurant.phone}</span>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div className="rounded-xl border border-border-light bg-[#FAFAF7] px-3.5 py-3">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[#9C9690] font-body mb-1">
+                    <MapPin size={13} /> Adresse
+                  </div>
+                  <p className="text-sm text-[#3D3A37] font-body">{restaurant.address}, {restaurant.city}</p>
                 </div>
-              )}
+                {restaurant.phone && (
+                  <div className="rounded-xl border border-border-light bg-[#FAFAF7] px-3.5 py-3">
+                    <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[#9C9690] font-body mb-1">
+                      <Phone size={13} /> Contact
+                    </div>
+                    <p className="text-sm text-[#3D3A37] font-body">{restaurant.phone}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="bg-[#FAFAF7] rounded-xl border border-border-light p-4 space-y-2">
-              <p className="text-sm font-body text-[#3D3A37]">
-                <span className="text-[#9C9690]">Frais de livraison:</span> €{Number(restaurant.delivery_fee).toFixed(2)}
-              </p>
-              <p className="text-sm font-body text-[#3D3A37]">
-                <span className="text-[#9C9690]">Commande minimum:</span> €{Number(restaurant.minimum_order).toFixed(2)}
-              </p>
-              <p className="text-sm font-body text-[#3D3A37]">
-                <span className="text-[#9C9690]">Délai:</span> {restaurant.estimated_delivery_min}–{restaurant.estimated_delivery_max} min
-              </p>
-              <p className="text-sm font-body text-[#3D3A37]">
-                <span className="text-[#9C9690]">Rayon:</span> {restaurant.delivery_radius_km} km
-              </p>
-              <p className="text-sm font-body text-[#3D3A37]">
-                <span className="text-[#9C9690]">Statut:</span> {restaurant.is_active ? 'Actif' : 'Inactif'}
-              </p>
+            <div className="xl:col-span-2 rounded-2xl border border-border-light bg-gradient-to-b from-[#FAFAF7] to-[#F4F2EE] p-4">
+              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-3">Aperçu opérationnel</h4>
+              <div className="grid grid-cols-2 gap-2.5">
+                {kpi.map((item) => (
+                  <div key={item.label} className="rounded-xl bg-white/80 border border-border-light px-3 py-2.5">
+                    <p className="text-[11px] uppercase tracking-wide text-[#9C9690] font-body">{item.label}</p>
+                    <p className="text-sm font-semibold font-body text-[#2F2B27] mt-0.5">{item.value}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {restaurant.description && (
-            <div>
-              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-1.5">Description</h4>
-              <p className="text-sm font-body text-[#4A4642]">{restaurant.description}</p>
+            <div className="rounded-2xl border border-border-light bg-white p-4">
+              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-2">Description</h4>
+              <p className="text-sm leading-6 font-body text-[#4A4642]">{restaurant.description}</p>
             </div>
           )}
 
-          {restaurant.logo_url && (
-            <div>
-              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-2">Logo</h4>
-              <img src={restaurant.logo_url} alt="Logo" className="h-14 w-14 object-contain rounded-xl border border-border-light bg-[#F7F7F5]" />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+            <div className="lg:col-span-1 rounded-2xl border border-border-light bg-white p-4">
+              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-3">Logo</h4>
+              {restaurant.logo_url ? (
+                <button type="button" onClick={() => setPreviewImage(restaurant.logo_url!)} className="h-24 w-24 rounded-2xl border border-border-light bg-[#F7F7F5] p-2">
+                  <img src={restaurant.logo_url} alt="Logo" className="h-full w-full object-contain" />
+                </button>
+              ) : (
+                <div className="h-24 w-24 rounded-2xl border border-dashed border-border-light bg-[#F7F7F5]" />
+              )}
             </div>
-          )}
 
-          {restaurant.gallery_urls && restaurant.gallery_urls.length > 0 && (
-            <div>
-              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-2">Galerie ({restaurant.gallery_urls.length})</h4>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5">
-                {restaurant.gallery_urls.map((url, i) => (
-                  <img key={`${url}-${i}`} src={url} alt="" className="h-16 w-full object-cover rounded-lg border border-border-light bg-[#F7F7F5]" />
+            <div className="lg:col-span-3 rounded-2xl border border-border-light bg-white p-4">
+              <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-3">Galerie ({gallery.length})</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+                {gallery.map((url, i) => (
+                  <button
+                    key={`${url}-${i}`}
+                    type="button"
+                    onClick={() => setPreviewImage(url)}
+                    className="group rounded-xl overflow-hidden border border-border-light bg-[#F7F7F5] h-28 sm:h-32"
+                  >
+                    <img src={url} alt={`Galerie ${i + 1}`} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  </button>
                 ))}
               </div>
+              {gallery.length === 0 && (
+                <p className="text-sm text-[#9C9690] font-body">Aucune image de galerie.</p>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
+
+      {previewImage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-5">
+          <div className="absolute inset-0 bg-black/80" onClick={() => setPreviewImage(null)} />
+          <div className="relative max-w-6xl w-full">
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-12 right-0 w-10 h-10 rounded-2xl bg-white/10 border border-white/30 text-white hover:bg-white/20"
+              aria-label="Fermer l’aperçu"
+            >
+              <X size={18} className="mx-auto" />
+            </button>
+            <img src={previewImage} alt="Aperçu" className="max-h-[82vh] w-full object-contain rounded-2xl shadow-2xl" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
