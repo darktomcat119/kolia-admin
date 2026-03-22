@@ -556,7 +556,7 @@ export function RestaurantEdit() {
                 {/* Gallery / sub images */}
                 <div>
                   <label className="block text-sm font-medium text-[#6B6560] font-body mb-2">Images supplémentaires (galerie)</label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 mb-3">
+                  <div className="mb-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                     {galleryUrls.map((url, index) => (
                       <div key={`${url}-${index}`} className="relative group">
                         <img
@@ -609,20 +609,20 @@ export function RestaurantEdit() {
                     )}
                   </div>
                   <p className="text-xs text-[#9C9690] font-body mt-2">Ou ajouter par URL</p>
-                  <div className="flex gap-2 mt-1">
+                  <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-stretch">
                     <input
                       type="url"
                       value={galleryUrlInput}
                       onChange={(e) => setGalleryUrlInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addGalleryUrl())}
                       placeholder="https://..."
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-border font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                      className="min-h-[44px] flex-1 rounded-xl border border-border px-4 py-2.5 font-body text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 sm:min-h-0"
                     />
                     <button
                       type="button"
                       onClick={addGalleryUrl}
                       disabled={!galleryUrlInput.trim()}
-                      className="px-4 py-2.5 rounded-xl border border-primary bg-primary/5 text-primary font-body text-sm font-medium hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="min-h-[44px] shrink-0 rounded-xl border border-primary bg-primary/5 px-4 py-2.5 font-body text-sm font-medium text-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-0"
                     >
                       Ajouter
                     </button>

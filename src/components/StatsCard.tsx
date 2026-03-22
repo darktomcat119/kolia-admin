@@ -56,10 +56,10 @@ export function StatsCard({ label, value, icon, color = 'orange', trend }: Stats
   const c = COLOR_MAP[color];
   return (
     <div
-      className={`${c.bg} rounded-2xl p-6 border ${c.border} ${c.glow} backdrop-blur-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-out cursor-default group`}
+      className={`${c.bg} cursor-default rounded-2xl border p-5 ${c.border} ${c.glow} backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl group sm:p-6`}
     >
-      <div className="flex items-start justify-between mb-5">
-        <div className={`w-12 h-12 rounded-xl ${c.iconBg} flex items-center justify-center ${c.iconColor} shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+      <div className="mb-4 flex items-start justify-between sm:mb-5">
+        <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${c.iconBg} ${c.iconColor} shadow-lg transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110 sm:h-12 sm:w-12`}>
           {icon}
         </div>
         {trend && (
@@ -68,10 +68,10 @@ export function StatsCard({ label, value, icon, color = 'orange', trend }: Stats
           </span>
         )}
       </div>
-      <div className="text-[34px] font-bold font-body text-[#1A1A1A] mb-1.5 leading-none tracking-tight">
+      <div className="mb-1 break-words font-body text-2xl font-bold leading-none tracking-tight text-[#1A1A1A] sm:text-3xl lg:text-[34px]">
         {value}
       </div>
-      <div className="text-[13px] text-[#8A857F] font-body mt-1.5 leading-snug font-medium">{label}</div>
+      <div className="mt-1 font-body text-xs font-medium leading-snug text-[#8A857F] sm:mt-1.5 sm:text-[13px]">{label}</div>
     </div>
   );
 }

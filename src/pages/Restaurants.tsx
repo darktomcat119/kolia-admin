@@ -149,7 +149,7 @@ function RestaurantDetailModal({
 
             <div className="lg:col-span-3 rounded-2xl border border-border-light bg-white p-4">
               <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-3">Galerie ({gallery.length})</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                 {gallery.map((url, i) => (
                   <button
                     key={`${url}-${i}`}

@@ -85,37 +85,47 @@ export function HeroCarousel({ greeting, title, subtitle }: HeroCarouselProps) {
           </span>
 
           {/* Progress-bar dots */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
             {SLIDES.map((_, i) => (
               <button
                 key={i}
+                type="button"
+                aria-label={`Image ${i + 1}`}
                 onClick={() => goTo(i)}
-                className="relative h-1 rounded-full overflow-hidden transition-all duration-300"
-                style={{ width: i === current ? 24 : 6 }}
+                className="flex h-10 min-w-[2.25rem] items-center justify-center rounded-lg sm:h-8 sm:min-w-0"
               >
-                <div className="absolute inset-0 bg-white/20 rounded-full" />
-                {i === current && (
-                  <div
-                    key={progressKey}
-                    className="absolute inset-y-0 left-0 bg-white rounded-full animate-progress-fill"
-                  />
-                )}
+                <span
+                  className="relative block h-1 overflow-hidden rounded-full transition-all duration-300"
+                  style={{ width: i === current ? 24 : 6 }}
+                >
+                  <span className="absolute inset-0 rounded-full bg-white/20" />
+                  {i === current && (
+                    <span
+                      key={progressKey}
+                      className="absolute inset-y-0 left-0 animate-progress-fill rounded-full bg-white"
+                    />
+                  )}
+                </span>
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Nav arrows — visible on hover */}
+      {/* Nav arrows — always on touch; hover on desktop */}
       <button
+        type="button"
+        aria-label="Image précédente"
         onClick={() => goTo((current - 1 + SLIDES.length) % SLIDES.length)}
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/20 hover:bg-black/50 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white transition-all opacity-0 group-hover:opacity-100 duration-300 border border-white/[0.06]"
+        className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.06] bg-black/30 text-white/80 backdrop-blur-md transition-all duration-300 hover:bg-black/50 hover:text-white sm:left-3 sm:h-9 sm:w-9 sm:bg-black/20 sm:text-white/60 sm:opacity-0 sm:group-hover:opacity-100"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <button
+        type="button"
+        aria-label="Image suivante"
         onClick={() => goTo((current + 1) % SLIDES.length)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/20 hover:bg-black/50 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white transition-all opacity-0 group-hover:opacity-100 duration-300 border border-white/[0.06]"
+        className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.06] bg-black/30 text-white/80 backdrop-blur-md transition-all duration-300 hover:bg-black/50 hover:text-white sm:right-3 sm:h-9 sm:w-9 sm:bg-black/20 sm:text-white/60 sm:opacity-0 sm:group-hover:opacity-100"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
       </button>

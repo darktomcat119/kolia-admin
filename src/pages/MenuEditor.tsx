@@ -331,8 +331,8 @@ export function MenuEditor() {
         {/* Items */}
         <div className="flex-1">
           {!activeCategory ? (
-            <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-border-light">
-              <p className="text-[#6B6560] font-body">
+            <div className="rounded-2xl border border-border-light bg-white px-4 py-10 text-center shadow-sm sm:p-12">
+              <p className="font-body text-[#6B6560]">
                 Créez une catégorie pour commencer à ajouter des plats
               </p>
             </div>
@@ -357,7 +357,7 @@ export function MenuEditor() {
 
               {/* Item Form Modal */}
               {showItemForm && (
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light mb-6">
+                <div className="mb-6 rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
                   <h3 className="text-base font-semibold font-body mb-4">
                     {editingItem ? 'Modifier le plat' : 'Nouveau plat'}
                   </h3>
@@ -445,7 +445,7 @@ export function MenuEditor() {
                             key={tag}
                             type="button"
                             onClick={() => toggleDietaryTag(tag)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-body transition-colors ${
+                            className={`min-h-[40px] rounded-full px-3 py-2 text-xs font-body transition-colors sm:min-h-0 sm:py-1.5 ${
                               itemForm.dietary_tags.includes(tag)
                                 ? 'bg-primary text-white'
                                 : 'bg-surface-hover text-[#6B6560] border border-border'
@@ -458,10 +458,10 @@ export function MenuEditor() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-xl bg-primary text-white font-body font-medium text-sm hover:bg-primary-dark transition-colors"
+                        className="min-h-[44px] rounded-xl bg-primary px-6 py-2.5 font-body text-sm font-medium text-white transition-colors hover:bg-primary-dark sm:min-h-0"
                       >
                         {editingItem ? 'Mettre à jour' : 'Ajouter'}
                       </button>
@@ -472,7 +472,7 @@ export function MenuEditor() {
                           setEditingItem(null);
                           setItemForm(EMPTY_ITEM);
                         }}
-                        className="px-6 py-2.5 rounded-xl border border-border text-sm font-body hover:bg-surface-hover transition-colors"
+                        className="min-h-[44px] rounded-xl border border-border px-6 py-2.5 font-body text-sm transition-colors hover:bg-surface-hover sm:min-h-0"
                       >
                         Annuler
                       </button>
@@ -483,8 +483,8 @@ export function MenuEditor() {
 
               {/* Items Table */}
               {activeItems.length === 0 ? (
-                <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-border-light">
-                  <p className="text-[#6B6560] font-body">
+                <div className="rounded-2xl border border-border-light bg-white px-4 py-10 text-center shadow-sm sm:p-12">
+                  <p className="font-body text-[#6B6560]">
                     Aucun plat dans cette catégorie
                   </p>
                 </div>

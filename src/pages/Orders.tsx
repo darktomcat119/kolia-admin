@@ -83,6 +83,7 @@ export function Orders() {
           return (
             <button
               key={status}
+              type="button"
               onClick={() => setFilter(status)}
               className={`flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-3 py-2 font-body text-xs transition-all sm:min-h-0 sm:px-4 sm:text-sm ${
                 filter === status
@@ -117,28 +118,28 @@ export function Orders() {
             <table className="w-full min-w-[860px]">
               <thead>
                 <tr className="border-b border-border-light bg-[#FAFAF7]">
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     N° commande
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Client
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Restaurant
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Articles
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Total
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Statut
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Date
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">
+                  <th className="px-3 py-3 text-left font-body text-[10px] font-semibold uppercase tracking-wide text-[#9C9690] sm:px-5 sm:py-3.5 sm:text-xs">
                     Actions
                   </th>
                 </tr>
@@ -150,28 +151,28 @@ export function Orders() {
                     className="border-b border-border-light last:border-0 hover:bg-[#FAFAF7] transition-colors cursor-pointer"
                     onClick={() => setSelectedOrder(order)}
                   >
-                    <td className="px-5 py-4 text-sm font-semibold font-body text-[#1A1A1A]">
+                    <td className="px-3 py-3 font-body text-xs font-semibold text-[#1A1A1A] sm:px-5 sm:py-4 sm:text-sm">
                       {order.order_number}
                     </td>
-                    <td className="px-5 py-4 text-sm font-body text-[#6B6560]">
+                    <td className="max-w-[100px] px-3 py-3 font-body text-xs text-[#6B6560] sm:max-w-none sm:px-5 sm:py-4 sm:text-sm">
                       {order.profile?.full_name ?? 'Inconnu'}
                     </td>
-                    <td className="px-5 py-4 text-sm font-body text-[#6B6560]">
+                    <td className="max-w-[100px] px-3 py-3 font-body text-xs text-[#6B6560] sm:max-w-none sm:px-5 sm:py-4 sm:text-sm">
                       {order.restaurant?.name ?? 'Inconnu'}
                     </td>
-                    <td className="px-5 py-4 text-sm font-body text-[#6B6560]">
+                    <td className="px-3 py-3 font-body text-xs text-[#6B6560] sm:px-5 sm:py-4 sm:text-sm">
                       {order.order_items?.length ?? 0} article(s)
                     </td>
-                    <td className="px-5 py-4 text-sm font-body font-semibold text-[#1A1A1A]">
+                    <td className="whitespace-nowrap px-3 py-3 font-body text-xs font-semibold text-[#1A1A1A] sm:px-5 sm:py-4 sm:text-sm">
                       €{Number(order.total).toFixed(2)}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-3 py-3 sm:px-5 sm:py-4">
                       <StatusBadge status={order.status} />
                     </td>
-                    <td className="px-5 py-4 text-sm font-body text-[#9C9690]">
+                    <td className="whitespace-nowrap px-3 py-3 font-body text-xs text-[#9C9690] sm:px-5 sm:py-4 sm:text-sm">
                       {new Date(order.created_at).toLocaleDateString('fr-FR')}
                     </td>
-                    <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-3 py-3 sm:px-5 sm:py-4" onClick={(e) => e.stopPropagation()}>
                       <StatusDropdown
                         currentStatus={order.status}
                         onStatusChange={(status) => handleStatusChange(order.id, status)}

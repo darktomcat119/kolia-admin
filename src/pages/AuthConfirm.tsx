@@ -54,8 +54,8 @@ export function AuthConfirm() {
 
   if (status === 'other') {
     return (
-      <div className="min-h-screen bg-[#FAFAF7] flex items-center justify-center p-6">
-        <div className="max-w-md w-full p-8 rounded-2xl bg-white border border-[#E5E3E0] shadow-sm text-center">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[#FAFAF7] px-4 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+        <div className="w-full max-w-md rounded-2xl border border-[#E5E3E0] bg-white p-6 text-center shadow-sm sm:p-8">
           <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
             <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -68,7 +68,7 @@ export function AuthConfirm() {
           </p>
           <Link
             to="/login"
-            className="inline-block px-6 py-3 rounded-xl bg-primary text-white font-body font-semibold hover:bg-primary-dark transition-colors"
+            className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-primary px-6 py-3 font-body font-semibold text-white transition-colors hover:bg-primary-dark sm:w-auto"
           >
             Retour à la connexion admin
           </Link>
@@ -79,7 +79,7 @@ export function AuthConfirm() {
 
   if (status === 'admin') {
     return (
-      <div className="min-h-screen bg-[#FAFAF7] flex items-center justify-center p-6">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[#FAFAF7] px-4 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="text-center">
           <div className="w-12 h-12 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
           <p className="text-[#3D3A37] font-body">Redirection...</p>
@@ -90,15 +90,15 @@ export function AuthConfirm() {
 
   if (status === 'error') {
     return (
-      <div className="min-h-screen bg-[#FAFAF7] flex items-center justify-center p-6">
-        <div className="max-w-md w-full p-8 rounded-2xl bg-white border border-[#E5E3E0] shadow-sm text-center">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[#FAFAF7] px-4 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+        <div className="w-full max-w-md rounded-2xl border border-[#E5E3E0] bg-white p-6 text-center shadow-sm sm:p-8">
           <h1 className="font-display text-xl text-[#1A1A1A] mb-2">Lien invalide ou expiré</h1>
           <p className="text-[#6B6560] font-body text-sm mb-6">
             Le lien de confirmation a expiré ou a déjà été utilisé.
           </p>
           <Link
             to="/login"
-            className="inline-block px-6 py-3 rounded-xl bg-primary text-white font-body font-semibold hover:bg-primary-dark transition-colors"
+            className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl bg-primary px-6 py-3 font-body font-semibold text-white transition-colors hover:bg-primary-dark sm:w-auto"
           >
             Aller à la connexion
           </Link>
@@ -108,7 +108,7 @@ export function AuthConfirm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] flex items-center justify-center p-6">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-[#FAFAF7] px-4 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <div className="text-center">
         <div className="w-12 h-12 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
         <p className="text-[#3D3A37] font-body">Confirmation en cours...</p>
