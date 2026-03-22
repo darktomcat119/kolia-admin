@@ -17,25 +17,27 @@ function ConfirmModal({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
-      <div className="relative bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
-        <div className="flex items-start gap-3 mb-5">
-          <div className="shrink-0 w-10 h-10 rounded-full bg-[#FDE8E8] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:pb-4">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} role="presentation" />
+      <div className="relative w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl sm:p-6">
+        <div className="mb-5 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FDE8E8]">
             <AlertTriangle size={18} className="text-[#DC2626]" />
           </div>
-          <p className="font-body text-sm text-[#1A1A1A] mt-2">{message}</p>
+          <p className="mt-2 font-body text-sm text-[#1A1A1A]">{message}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:gap-3">
           <button
+            type="button"
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-border text-sm font-body font-medium hover:bg-surface-hover transition-colors"
+            className="min-h-[44px] flex-1 rounded-xl border border-border py-2.5 font-body text-sm font-medium transition-colors hover:bg-surface-hover sm:min-h-0"
           >
             Annuler
           </button>
           <button
+            type="button"
             onClick={onConfirm}
-            className="flex-1 py-2.5 rounded-xl bg-[#DC2626] text-white text-sm font-body font-medium hover:bg-[#B91C1C] transition-colors"
+            className="min-h-[44px] flex-1 rounded-xl bg-[#DC2626] py-2.5 font-body text-sm font-medium text-white transition-colors hover:bg-[#B91C1C] sm:min-h-0"
           >
             Supprimer
           </button>
@@ -63,24 +65,25 @@ function RestaurantDetailModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#0F1011]/65 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl border border-white/60">
-        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-border-light px-6 py-4 flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-semibold font-body text-[#1A1A1A] tracking-tight">{restaurant.name}</h3>
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+      <div className="absolute inset-0 bg-[#0F1011]/65 backdrop-blur-[2px]" onClick={onClose} role="presentation" />
+      <div className="relative flex max-h-[min(94dvh,100%)] w-full max-w-5xl flex-col overflow-hidden rounded-t-[1.25rem] border border-white/60 bg-white shadow-2xl sm:max-h-[90dvh] sm:rounded-3xl">
+        <div className="sticky top-0 z-10 flex flex-col gap-3 border-b border-border-light bg-white/95 px-4 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="min-w-0">
+            <h3 className="font-body text-lg font-semibold tracking-tight text-[#1A1A1A] sm:text-xl">{restaurant.name}</h3>
             <p className="text-sm text-[#9C9690] font-body">{CUISINE_LABELS[restaurant.cuisine_type]}</p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-2xl border border-border text-[#6B6560] hover:bg-surface-hover transition-colors"
+            className="h-11 w-11 shrink-0 self-end rounded-2xl border border-border text-[#6B6560] transition-colors hover:bg-surface-hover sm:h-10 sm:w-10 sm:self-auto"
             aria-label="Fermer"
           >
             <X size={16} className="mx-auto" />
           </button>
         </div>
 
-        <div className="p-6 overflow-auto max-h-[calc(90vh-76px)] space-y-6">
+        <div className="max-h-[calc(94dvh-88px)] space-y-5 overflow-y-auto overscroll-y-contain p-4 sm:max-h-[calc(90vh-88px)] sm:space-y-6 sm:p-6">
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
             <div className="xl:col-span-3 space-y-4">
               <div className="h-60 sm:h-72 rounded-2xl overflow-hidden border border-border-light bg-[#F7F7F5]">
@@ -114,7 +117,7 @@ function RestaurantDetailModal({
 
             <div className="xl:col-span-2 rounded-2xl border border-border-light bg-gradient-to-b from-[#FAFAF7] to-[#F4F2EE] p-4">
               <h4 className="text-sm font-semibold font-body text-[#1A1A1A] mb-3">Aperçu opérationnel</h4>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 {kpi.map((item) => (
                   <div key={item.label} className="rounded-xl bg-white/80 border border-border-light px-3 py-2.5">
                     <p className="text-[11px] uppercase tracking-wide text-[#9C9690] font-body">{item.label}</p>
@@ -167,17 +170,28 @@ function RestaurantDetailModal({
       </div>
 
       {previewImage && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-5">
-          <div className="absolute inset-0 bg-black/80" onClick={() => setPreviewImage(null)} />
-          <div className="relative max-w-6xl w-full">
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="absolute -top-12 right-0 w-10 h-10 rounded-2xl bg-white/10 border border-white/30 text-white hover:bg-white/20"
-              aria-label="Fermer l’aperçu"
-            >
-              <X size={18} className="mx-auto" />
-            </button>
-            <img src={previewImage} alt="Aperçu" className="max-h-[82vh] w-full object-contain rounded-2xl shadow-2xl" />
+        <div className="fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-4">
+          <div
+            className="absolute inset-0 bg-black/80"
+            onClick={() => setPreviewImage(null)}
+            role="presentation"
+          />
+          <div className="relative w-full max-w-6xl px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 sm:max-h-[90dvh] sm:px-4 sm:pb-4 sm:pt-0">
+            <div className="mb-2 flex justify-end sm:absolute sm:right-2 sm:top-2 sm:z-10 sm:mb-0">
+              <button
+                type="button"
+                onClick={() => setPreviewImage(null)}
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/30 bg-white/10 text-white hover:bg-white/20"
+                aria-label="Fermer l’aperçu"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <img
+              src={previewImage}
+              alt="Aperçu"
+              className="max-h-[min(78dvh,100%)] w-full rounded-xl object-contain shadow-2xl sm:max-h-[min(85dvh,calc(90dvh-3rem))] sm:rounded-2xl"
+            />
           </div>
         </div>
       )}
@@ -244,14 +258,15 @@ export function Restaurants() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6 animate-fade-up">
-        <div>
-          <h1 className="text-2xl font-semibold font-body text-[#1A1A1A]">Restaurants</h1>
-          <p className="text-sm text-[#9C9690] font-body mt-0.5">{restaurants.length} établissement(s)</p>
+      <div className="mb-6 flex animate-fade-up flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="font-body text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Restaurants</h1>
+          <p className="mt-0.5 font-body text-sm text-[#9C9690]">{restaurants.length} établissement(s)</p>
         </div>
         <button
+          type="button"
           onClick={() => navigate('/restaurants/new')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-body font-medium text-sm hover:bg-primary-dark transition-colors shadow-sm shadow-primary/20"
+          className="flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-2.5 font-body text-sm font-medium text-white shadow-sm shadow-primary/20 transition-colors hover:bg-primary-dark sm:w-auto"
         >
           <Plus size={16} />
           Ajouter un restaurant
@@ -259,7 +274,7 @@ export function Restaurants() {
       </div>
 
       {restaurants.length === 0 ? (
-        <div className="bg-white rounded-2xl p-16 text-center shadow-sm border border-border-light">
+        <div className="rounded-2xl border border-border-light bg-white p-10 text-center shadow-sm sm:p-16">
           <div className="w-14 h-14 rounded-2xl bg-[#F5F3F0] flex items-center justify-center mx-auto mb-4">
             <UtensilsCrossed size={24} className="text-[#C4C0BB]" />
           </div>
@@ -329,37 +344,43 @@ export function Restaurants() {
                   {CUISINE_LABELS[restaurant.cuisine_type]}
                 </p>
 
-                <div className="flex gap-1.5 text-xs text-[#A39E98] font-body mb-4">
-                  <span className="px-2 py-1 bg-[#F5F3F0] rounded-lg">Min. €{Number(restaurant.minimum_order).toFixed(0)}</span>
-                  <span className="px-2 py-1 bg-[#F5F3F0] rounded-lg">Livraison €{Number(restaurant.delivery_fee).toFixed(2)}</span>
-                  <span className="px-2 py-1 bg-[#F5F3F0] rounded-lg">{restaurant.estimated_delivery_min}–{restaurant.estimated_delivery_max} min</span>
+                <div className="mb-4 flex flex-wrap gap-1.5 font-body text-xs text-[#A39E98]">
+                  <span className="rounded-lg bg-[#F5F3F0] px-2 py-1">Min. €{Number(restaurant.minimum_order).toFixed(0)}</span>
+                  <span className="rounded-lg bg-[#F5F3F0] px-2 py-1">Livraison €{Number(restaurant.delivery_fee).toFixed(2)}</span>
+                  <span className="rounded-lg bg-[#F5F3F0] px-2 py-1">
+                    {restaurant.estimated_delivery_min}–{restaurant.estimated_delivery_max} min
+                  </span>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                   <button
+                    type="button"
                     onClick={() => setDetailTarget(restaurant)}
-                    className="py-2 px-3 rounded-xl border border-[#E5E3E0] text-[#3D3A37] hover:bg-[#F5F3F0] transition-colors"
+                    className="flex min-h-[44px] items-center justify-center rounded-xl border border-[#E5E3E0] py-2 text-[#3D3A37] transition-colors hover:bg-[#F5F3F0] sm:min-h-0 sm:px-3"
                     title="Voir les détails"
                   >
                     <Eye size={15} />
                   </button>
                   <button
+                    type="button"
                     onClick={() => navigate(`/restaurants/${restaurant.id}`)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-[#E5E3E0] text-sm font-body font-medium text-[#3D3A37] hover:bg-[#F5F3F0] transition-colors"
+                    className="col-span-1 flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E3E0] py-2 font-body text-sm font-medium text-[#3D3A37] transition-colors hover:bg-[#F5F3F0] sm:min-w-[100px]"
                   >
                     <Pencil size={13} />
                     Modifier
                   </button>
                   <button
+                    type="button"
                     onClick={() => navigate(`/restaurants/${restaurant.id}/menu`)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary/10 text-primary text-sm font-body font-medium hover:bg-primary/20 transition-colors"
+                    className="col-span-1 flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-2 font-body text-sm font-medium text-primary transition-colors hover:bg-primary/20 sm:min-w-[100px]"
                   >
                     <Menu size={13} />
                     Menu
                   </button>
                   <button
+                    type="button"
                     onClick={() => setDeleteTarget({ id: restaurant.id, name: restaurant.name })}
-                    className="py-2 px-3 rounded-xl border border-[#F5E0E0] text-[#DC2626] hover:bg-[#FDE8E8] transition-colors"
+                    className="col-span-2 flex min-h-[44px] items-center justify-center rounded-xl border border-[#F5E0E0] py-2 text-[#DC2626] transition-colors hover:bg-[#FDE8E8] sm:col-span-1 sm:min-h-0 sm:px-3"
                   >
                     <X size={15} />
                   </button>

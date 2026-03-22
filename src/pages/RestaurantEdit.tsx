@@ -350,25 +350,26 @@ export function RestaurantEdit() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <button
+            type="button"
             onClick={() => navigate('/restaurants')}
-            className="flex items-center gap-1.5 text-sm text-[#9C9690] hover:text-[#1A1A1A] transition-colors font-body"
+            className="flex min-h-[44px] items-center gap-1.5 font-body text-sm text-[#9C9690] transition-colors hover:text-[#1A1A1A]"
           >
             <ArrowLeft size={16} />
             Retour
           </button>
-          <span className="text-[#C4C0BB]">/</span>
-          <h1 className="text-xl font-semibold font-body text-[#1A1A1A]">
+          <span className="hidden text-[#C4C0BB] sm:inline">/</span>
+          <h1 className="font-body text-lg font-semibold text-[#1A1A1A] sm:text-xl">
             {isNew ? 'Nouveau restaurant' : 'Modifier le restaurant'}
           </h1>
         </div>
-        <div className="flex gap-3">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:gap-3">
           <button
             type="button"
             onClick={() => navigate('/restaurants')}
-            className="px-5 py-2.5 rounded-2xl border border-[#E5E3E0] text-sm font-body font-medium text-[#6B6560] hover:bg-[#F5F3F0] transition-colors"
+            className="min-h-[44px] rounded-2xl border border-[#E5E3E0] px-5 py-2.5 font-body text-sm font-medium text-[#6B6560] transition-colors hover:bg-[#F5F3F0] sm:min-h-0"
           >
             Annuler
           </button>
@@ -376,7 +377,7 @@ export function RestaurantEdit() {
             form="restaurant-form"
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-body font-semibold text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 shadow-sm shadow-primary/20"
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-2.5 font-body text-sm font-semibold text-white shadow-sm shadow-primary/20 transition-colors hover:bg-primary-dark disabled:opacity-50 sm:min-h-0"
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
             {saving ? 'Enregistrement...' : isNew ? 'Créer' : 'Enregistrer'}
@@ -397,8 +398,8 @@ export function RestaurantEdit() {
           {/* Left column */}
           <div className="space-y-5">
             {/* Basic Info */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light">
-              <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-4">Informations générales</h2>
+            <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
+              <h2 className="mb-4 font-body text-base font-semibold text-[#1A1A1A]">Informations générales</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Nom *</label>
@@ -421,7 +422,7 @@ export function RestaurantEdit() {
                     className="w-full px-4 py-3 rounded-xl border border-border font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all resize-none"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Type de cuisine *</label>
                     <select
@@ -449,7 +450,7 @@ export function RestaurantEdit() {
             </div>
 
             {/* Images — upload (main cover + logo) or paste URL */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light">
+            <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
               <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-1">Images</h2>
               <p className="text-xs text-[#9C9690] font-body mb-4">Téléversez une image de couverture et un logo, ou collez une URL.</p>
               <div className="space-y-6">
@@ -634,7 +635,7 @@ export function RestaurantEdit() {
           {/* Right column */}
           <div className="space-y-5">
             {/* Location */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light">
+            <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
               <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-4">Adresse & Localisation</h2>
               <div className="space-y-4">
                 <div>
@@ -680,7 +681,7 @@ export function RestaurantEdit() {
                     Renseignez le numéro, la rue et des détails utiles (bâtiment, étage, etc.) si nécessaire.
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Ville *</label>
                     <input
@@ -705,7 +706,7 @@ export function RestaurantEdit() {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Latitude *</label>
                     <input
@@ -733,9 +734,9 @@ export function RestaurantEdit() {
             </div>
 
             {/* Delivery Settings */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light">
+            <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
               <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-4">Paramètres de livraison</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Frais de livraison (€)</label>
                   <input
@@ -805,8 +806,8 @@ export function RestaurantEdit() {
         </div>
 
         {/* Opening Hours — full width */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light">
-          <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-4">Horaires d'ouverture</h2>
+        <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
+          <h2 className="mb-4 font-body text-base font-semibold text-[#1A1A1A]">Horaires d'ouverture</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
             {DAYS.map((day) => {
               const hours = form.opening_hours?.[day];

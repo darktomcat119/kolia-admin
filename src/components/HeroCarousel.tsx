@@ -45,7 +45,7 @@ export function HeroCarousel({ greeting, title, subtitle }: HeroCarouselProps) {
   }, [current, goTo]);
 
   return (
-    <div className="relative rounded-3xl overflow-hidden mb-8 h-56 group">
+    <div className="relative mb-6 h-44 overflow-hidden rounded-2xl group sm:mb-8 sm:h-52 sm:rounded-3xl md:h-56">
       {/* Slides — Ken Burns zoom per active slide */}
       {SLIDES.map((slide, i) => (
         <div
@@ -71,15 +71,15 @@ export function HeroCarousel({ greeting, title, subtitle }: HeroCarouselProps) {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col justify-between h-full px-8 py-7">
+      <div className="relative z-10 flex h-full flex-col justify-between px-4 py-5 sm:px-8 sm:py-7">
         <div>
-          <p className="text-[#D4A745]/70 font-body text-xs uppercase tracking-[0.2em] mb-1">{greeting}</p>
-          <h1 className="font-display text-3xl text-white leading-tight drop-shadow-lg">{title}</h1>
-          <p className="text-white/40 font-body text-sm mt-1.5">{subtitle}</p>
+          <p className="mb-1 font-body text-[10px] uppercase tracking-[0.2em] text-[#D4A745]/70 sm:text-xs">{greeting}</p>
+          <h1 className="font-display text-2xl leading-tight text-white drop-shadow-lg sm:text-3xl">{title}</h1>
+          <p className="mt-1 line-clamp-2 font-body text-xs text-white/40 sm:mt-1.5 sm:text-sm">{subtitle}</p>
         </div>
 
         {/* Bottom: slide label + progress dots */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-white/30 font-body text-xs italic tracking-wide">
             {SLIDES[current].label}
           </span>

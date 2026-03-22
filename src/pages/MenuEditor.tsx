@@ -229,22 +229,23 @@ export function MenuEditor() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button
+          type="button"
           onClick={() => navigate('/restaurants')}
-          className="text-[#6B6560] hover:text-[#1A1A1A] transition-colors"
+          className="flex min-h-[44px] w-fit items-center gap-1 text-[#6B6560] transition-colors hover:text-[#1A1A1A]"
         >
-          <ArrowLeft size={18} className="inline -mt-0.5" /> Retour
+          <ArrowLeft size={18} className="-mt-0.5 inline" /> Retour
         </button>
-        <h1 className="text-2xl font-semibold font-body">
+        <h1 className="font-body text-xl font-semibold sm:text-2xl">
           Menu — {restaurant?.name}
         </h1>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {/* Categories Sidebar */}
-        <div className="w-64 shrink-0">
-          <div className="bg-white rounded-2xl shadow-sm border border-border-light p-4">
+        <div className="w-full shrink-0 lg:w-64">
+          <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm">
             <h3 className="text-sm font-medium text-[#6B6560] font-body mb-3">
               Catégories
             </h3>
@@ -337,19 +338,20 @@ export function MenuEditor() {
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold font-body">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="font-body text-lg font-semibold">
                   {categories.find((c) => c.id === activeCategory)?.name}
                 </h2>
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setItemForm(EMPTY_ITEM);
                     setShowItemForm(true);
                   }}
-                  className="px-4 py-2 rounded-xl bg-primary text-white font-body font-medium text-sm hover:bg-primary-dark transition-colors"
+                  className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-primary-dark sm:w-auto sm:min-h-0"
                 >
-                  <Plus size={16} className="inline -mt-0.5" /> Ajouter un plat
+                  <Plus size={16} className="-mt-0.5 inline" /> Ajouter un plat
                 </button>
               </div>
 
@@ -363,7 +365,7 @@ export function MenuEditor() {
                     onSubmit={editingItem ? handleUpdateItem : handleAddItem}
                     className="space-y-4"
                   >
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-[#6B6560] font-body mb-1">
                           Nom *
@@ -487,8 +489,9 @@ export function MenuEditor() {
                   </p>
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl shadow-sm border border-border-light overflow-hidden">
-                  <table className="w-full">
+                <div className="overflow-hidden rounded-2xl border border-border-light bg-white shadow-sm">
+                  <div className="-mx-1 overflow-x-auto overscroll-x-contain px-1 sm:mx-0 sm:px-0">
+                  <table className="w-full min-w-[560px]">
                     <thead>
                       <tr className="border-b border-border-light">
                         <th className="text-left p-4 text-sm font-medium text-[#6B6560] font-body">
@@ -573,6 +576,7 @@ export function MenuEditor() {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
               )}
             </>

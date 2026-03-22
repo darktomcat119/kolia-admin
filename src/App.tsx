@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './lib/auth';
 import { ToastProvider } from './components/Toast';
 import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
+import { AuthConfirm } from './pages/AuthConfirm';
 import { Dashboard } from './pages/Dashboard';
 import { Orders } from './pages/Orders';
 import { Restaurants } from './pages/Restaurants';
@@ -52,6 +53,7 @@ function App() {
               </GuestGuard>
             }
           />
+          <Route path="/auth/confirm" element={<AuthConfirm />} />
 
           {/* Protected */}
           <Route

@@ -68,22 +68,23 @@ export function Orders() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 animate-fade-up">
-        <div>
-          <h1 className="text-2xl font-semibold font-body text-[#1A1A1A]">Commandes</h1>
-          <p className="text-sm text-[#9C9690] font-body mt-0.5">{orders.length} commande(s) au total</p>
-        </div>
+      <div className="mb-4 animate-fade-up sm:mb-6">
+        <h1 className="font-body text-xl font-semibold text-[#1A1A1A] sm:text-2xl">Commandes</h1>
+        <p className="mt-0.5 font-body text-sm text-[#9C9690]">{orders.length} commande(s) au total</p>
       </div>
 
       {/* Status Filters */}
-      <div className="flex flex-wrap gap-2 mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+      <div
+        className="-mx-1 mb-4 flex gap-2 overflow-x-auto overflow-y-hidden pb-2 animate-fade-up sm:mx-0 sm:mb-6 sm:flex-wrap sm:overflow-visible sm:pb-0"
+        style={{ animationDelay: '0.1s' }}
+      >
         {STATUS_FILTERS.map((status) => {
           const count = status !== 'all' ? orders.filter((o) => o.status === status).length : orders.length;
           return (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-full text-sm font-body transition-all flex items-center gap-1.5 ${
+              className={`flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-3 py-2 font-body text-xs transition-all sm:min-h-0 sm:px-4 sm:text-sm ${
                 filter === status
                   ? 'bg-primary text-white shadow-sm shadow-primary/20'
                   : 'bg-white border border-[#E5E3E0] text-[#6B6560] hover:border-primary/30 hover:text-[#1A1A1A]'
@@ -105,15 +106,15 @@ export function Orders() {
       {/* Orders Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-border-light animate-fade-up" style={{ animationDelay: '0.2s' }}>
         {filtered.length === 0 ? (
-          <div className="p-16 text-center">
+          <div className="px-4 py-12 text-center sm:p-16">
             <div className="w-12 h-12 rounded-2xl bg-[#F5F3F0] flex items-center justify-center mx-auto mb-3">
               <Package size={22} className="text-[#C4C0BB]" />
             </div>
             <p className="text-[#6B6560] font-body text-sm">Aucune commande trouvée</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="-mx-1 overflow-x-auto overscroll-x-contain px-1 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[860px]">
               <thead>
                 <tr className="border-b border-border-light bg-[#FAFAF7]">
                   <th className="text-left px-5 py-3.5 text-xs font-semibold text-[#9C9690] font-body uppercase tracking-wide">

@@ -29,11 +29,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
+      <div className="pointer-events-none fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-4 right-4 z-50 flex max-w-full flex-col gap-3 sm:left-auto sm:right-6 sm:w-80">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-body pointer-events-auto transition-all duration-300 ${
+            className={`pointer-events-auto flex max-w-full items-center gap-3 rounded-xl px-4 py-3 font-body text-sm shadow-lg transition-all duration-300 ${
               toast.type === 'success'
                 ? 'bg-[#E8F9EE] text-[#16A34A] border border-[#16A34A]/20'
                 : 'bg-[#FDE8E8] text-[#DC2626] border border-[#DC2626]/20'
@@ -44,10 +44,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             ) : (
               <XCircle size={16} className="shrink-0" />
             )}
-            <span>{toast.message}</span>
+            <span className="min-w-0 flex-1 break-words">{toast.message}</span>
             <button
+              type="button"
               onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
-              className="ml-2 opacity-60 hover:opacity-100"
+              className="ml-2 min-h-[44px] min-w-[44px] shrink-0 opacity-60 hover:opacity-100 sm:min-h-0 sm:min-w-0"
             >
               <X size={14} />
             </button>
