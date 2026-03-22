@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Shield, BarChart3, Zap } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
+
+const getAuthBaseUrl = () =>
+  import.meta.env.VITE_SITE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : 'https://kolia-admin.vercel.app');
 import { LoginCarousel } from '../components/LoginCarousel';
 
 const FLOATING_PARTICLES = [
@@ -41,7 +45,7 @@ export function Login() {
     setError('');
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${getAuthBaseUrl()}/reset-password`,
       });
       if (resetError) throw resetError;
       setResetSent(true);

@@ -2,6 +2,11 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 
+/** Auth redirect base URL. Set VITE_SITE_URL in production (e.g. https://kolia-admin.vercel.app) */
+const getAuthBaseUrl = () =>
+  import.meta.env.VITE_SITE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : 'https://kolia-admin.vercel.app');
+
 interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
@@ -54,7 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resendConfirmation = async (email: string) => {
-    const { error } = await supabase.auth.resend({ type: 'signup', email });
+    const redirectUrl = `${getAuthBaseUrl()}/auth/confirm`;
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: redirectUrl },
+    });
     if (error) throw error;
   };
 
