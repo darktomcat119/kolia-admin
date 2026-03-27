@@ -9,6 +9,8 @@ import { Orders } from './pages/Orders';
 import { Restaurants } from './pages/Restaurants';
 import { RestaurantEdit } from './pages/RestaurantEdit';
 import { MenuEditor } from './pages/MenuEditor';
+import { Reviews } from './pages/Reviews';
+import { LandingContent } from './pages/LandingContent';
 import type { ReactNode } from 'react';
 
 function AuthGuard({ children }: { children: ReactNode }) {
@@ -74,6 +76,8 @@ function App() {
             <Route path="/restaurants" element={<Restaurants />} />
             <Route path="/restaurants/:id" element={<RestaurantEdit />} />
             <Route path="/restaurants/:id/menu" element={<MenuEditor />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/landing" element={<LandingContent />} />
           </Route>
 
           {/* Redirect */}

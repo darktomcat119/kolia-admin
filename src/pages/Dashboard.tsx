@@ -1,24 +1,58 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Package, DollarSign, Store, Clock } from 'lucide-react';
 import { StatsCard } from '../components/StatsCard';
 import { StatusBadge } from '../components/StatusBadge';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { api } from '../lib/api';
 import type { DashboardStats, Order } from '../lib/types';
+import { supabase } from '../lib/supabase';
+
+type ReviewMetricRow = {
+  rating: number;
+  is_approved: boolean;
+  created_at: string;
+};
 
 export function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [reviewMetrics, setReviewMetrics] = useState({
+    approvedCount: 0,
+    hiddenCount: 0,
+    avgApproved: 0,
+    last7Days: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
-      const [statsData, ordersData] = await Promise.all([
+      const [statsData, ordersData, reviewsRes] = await Promise.all([
         api.get<DashboardStats>('/api/admin/stats'),
         api.get<Order[]>('/api/admin/orders'),
+        supabase
+          .from('restaurant_reviews')
+          .select('rating, is_approved, created_at')
+          .limit(5000),
       ]);
       setStats(statsData);
       setRecentOrders(ordersData.slice(0, 10));
+      if (reviewsRes.error) throw reviewsRes.error;
+
+      const reviews = (reviewsRes.data ?? []) as ReviewMetricRow[];
+      const approved = reviews.filter((r) => r.is_approved);
+      const hidden = reviews.length - approved.length;
+      const approvedAvg = approved.length
+        ? approved.reduce((sum, r) => sum + Number(r.rating || 0), 0) / approved.length
+        : 0;
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const last7Days = reviews.filter((r) => new Date(r.created_at).getTime() >= sevenDaysAgo).length;
+      setReviewMetrics({
+        approvedCount: approved.length,
+        hiddenCount: hidden,
+        avgApproved: Number(approvedAvg.toFixed(2)),
+        last7Days,
+      });
     } catch (err) {
       console.error('Failed to fetch dashboard data:', err);
     } finally {
@@ -86,6 +120,30 @@ export function Dashboard() {
             color="purple"
           />
         </div>
+      </div>
+
+      {/* Review analytics */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-10 sm:grid-cols-2 lg:grid-cols-4">
+        <Link to="/reviews?filter=approved" className="rounded-2xl border border-[#E5E3E0] bg-white p-4 shadow-sm transition hover:border-primary/30 hover:shadow-md">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9C9690]">Note moyenne</p>
+          <p className="mt-2 text-2xl font-semibold text-[#1A1A1A]">★ {reviewMetrics.avgApproved.toFixed(2)}</p>
+          <p className="mt-1 text-xs text-[#9C9690]">Avis approuvés · Voir détails</p>
+        </Link>
+        <Link to="/reviews?filter=approved" className="rounded-2xl border border-[#E5E3E0] bg-white p-4 shadow-sm transition hover:border-primary/30 hover:shadow-md">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9C9690]">Avis approuvés</p>
+          <p className="mt-2 text-2xl font-semibold text-[#1A1A1A]">{reviewMetrics.approvedCount}</p>
+          <p className="mt-1 text-xs text-[#9C9690]">Visibles dans l&apos;app client · Voir détails</p>
+        </Link>
+        <Link to="/reviews?filter=hidden" className="rounded-2xl border border-[#E5E3E0] bg-white p-4 shadow-sm transition hover:border-primary/30 hover:shadow-md">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9C9690]">Avis masqués</p>
+          <p className="mt-2 text-2xl font-semibold text-[#1A1A1A]">{reviewMetrics.hiddenCount}</p>
+          <p className="mt-1 text-xs text-[#9C9690]">Non pris en compte dans la note · Voir détails</p>
+        </Link>
+        <Link to="/reviews?filter=all" className="rounded-2xl border border-[#E5E3E0] bg-white p-4 shadow-sm transition hover:border-primary/30 hover:shadow-md">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#9C9690]">Nouveaux avis (7j)</p>
+          <p className="mt-2 text-2xl font-semibold text-[#1A1A1A]">{reviewMetrics.last7Days}</p>
+          <p className="mt-1 text-xs text-[#9C9690]">Toutes modérations confondues · Voir détails</p>
+        </Link>
       </div>
 
       {/* Recent Orders */}

@@ -21,6 +21,25 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+type ApiEnvelope = { error?: string; data?: unknown };
+
+async function readApiJson(response: Response): Promise<ApiEnvelope> {
+  const text = await response.text();
+  if (!text.trim()) {
+    if (response.status === 405) {
+      throw new Error(
+        '405 Method Not Allowed (empty body). Set VITE_API_URL in Vercel to your Railway API base URL (https://….up.railway.app), not the admin site URL, then redeploy.',
+      );
+    }
+    throw new Error(response.statusText || `Request failed (${response.status})`);
+  }
+  try {
+    return JSON.parse(text) as ApiEnvelope;
+  } catch {
+    throw new Error(`Invalid response (${response.status}): ${text.slice(0, 160)}`);
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const authHeaders = await getAuthHeaders();
 
@@ -33,7 +52,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     },
   });
 
-  const json = await response.json();
+  const json = await readApiJson(response);
 
   if (!response.ok) {
     throw new Error(json.error || 'Request failed');
@@ -49,7 +68,7 @@ async function uploadRequest<T>(path: string, formData: FormData): Promise<T> {
     headers: authHeaders,
     body: formData,
   });
-  const json = await response.json();
+  const json = await readApiJson(response);
   if (!response.ok) {
     throw new Error(json.error || 'Upload failed');
   }
@@ -69,5 +88,11 @@ export const api = {
     formData.append('file', file);
     formData.append('type', type);
     return uploadRequest<{ url: string }>('/api/admin/upload/restaurant-image', formData);
+  },
+  uploadMenuItemImage: (file: File, restaurantId: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('restaurant_id', restaurantId);
+    return uploadRequest<{ url: string }>('/api/admin/upload/menu-item-image', formData);
   },
 };

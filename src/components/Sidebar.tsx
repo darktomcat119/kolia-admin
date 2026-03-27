@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, UtensilsCrossed, LogOut, ChevronRight, X } from 'lucide-react';
+import { LayoutDashboard, Package, UtensilsCrossed, Star, FileText, LogOut, ChevronRight, X } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import type { LucideIcon } from 'lucide-react';
 
@@ -7,6 +7,8 @@ const NAV_ITEMS: { path: string; label: string; icon: LucideIcon; description: s
   { path: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard, description: "Vue d'ensemble" },
   { path: '/orders', label: 'Commandes', icon: Package, description: 'Gérer les commandes' },
   { path: '/restaurants', label: 'Restaurants', icon: UtensilsCrossed, description: 'Gérer les établissements' },
+  { path: '/reviews', label: 'Avis', icon: Star, description: 'Modérer les évaluations' },
+  { path: '/landing', label: 'Landing', icon: FileText, description: "Contenu page d'accueil" },
 ];
 
 type SidebarProps = {

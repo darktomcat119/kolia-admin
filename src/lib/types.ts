@@ -48,6 +48,8 @@ export interface Restaurant {
   delivery_radius_km: number;
   pickup_available: boolean;
   is_active: boolean;
+  featured: boolean;
+  featured_rank: number;
   language: string;
   rating: number;
   total_reviews: number;

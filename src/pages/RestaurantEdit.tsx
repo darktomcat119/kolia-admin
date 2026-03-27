@@ -65,6 +65,8 @@ const EMPTY_RESTAURANT: Partial<Restaurant> = {
   delivery_radius_km: 5,
   pickup_available: true,
   is_active: true,
+  featured: false,
+  featured_rank: 0,
   opening_hours: Object.fromEntries(
     DAYS.map((d) => [d, { open: '11:00', close: '22:00' }]),
   ),
@@ -799,6 +801,41 @@ export function RestaurantEdit() {
                     className="w-4 h-4 rounded accent-primary"
                   />
                   <label htmlFor="pickup" className="text-sm font-body text-[#6B6560]">Retrait disponible</label>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer app visibility / curation */}
+            <div className="rounded-2xl border border-border-light bg-white p-4 shadow-sm sm:p-6">
+              <h2 className="text-base font-semibold font-body text-[#1A1A1A] mb-1">Mise en avant (app client)</h2>
+              <p className="text-sm font-body text-[#9C9690] mb-4">
+                Contrôlez quels restaurants apparaissent dans la section « Destaques » et leur ordre.
+              </p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={form.featured ?? false}
+                    onChange={(e) => updateField('featured', e.target.checked)}
+                    className="w-4 h-4 rounded accent-primary"
+                  />
+                  <label htmlFor="featured" className="text-sm font-body text-[#6B6560]">
+                    Afficher en « Destaques »
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#6B6560] font-body mb-1.5">Priorité (rang)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.featured_rank ?? 0}
+                    onChange={(e) => updateField('featured_rank', Number(e.target.value))}
+                    disabled={!(form.featured ?? false)}
+                    className="w-full px-4 py-3 rounded-xl border border-border font-body text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all disabled:bg-[#FAFAF7]"
+                  />
+                  <p className="mt-1 text-xs font-body text-[#9C9690]">Plus petit = plus haut dans la liste.</p>
                 </div>
               </div>
             </div>
