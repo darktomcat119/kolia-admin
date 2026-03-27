@@ -159,14 +159,11 @@ export function LandingContent() {
   const loadLocale = async (next: Locale) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('landing_page_content')
-        .select('content, is_active')
-        .eq('locale', next)
-        .maybeSingle();
-      if (error) throw error;
-      setContent((data?.content as LandingContentType | undefined) ?? DEFAULT_TEMPLATE);
-      setIsActive(data?.is_active ?? true);
+      const row = await api.get<{ content: LandingContentType; is_active: boolean } | null>(
+        `/api/admin/landing-content/${next}`,
+      );
+      setContent(row?.content ?? DEFAULT_TEMPLATE);
+      setIsActive(row?.is_active ?? true);
       setLocale(next);
     } catch (e) {
       showToast(e instanceof Error ? e.message : 'Échec du chargement', 'error');
@@ -186,17 +183,10 @@ export function LandingContent() {
     }
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('landing_page_content')
-        .upsert(
-          {
-            locale,
-            content,
-            is_active: isActive,
-          },
-          { onConflict: 'locale' },
-        );
-      if (error) throw error;
+      await api.put(`/api/admin/landing-content/${locale}`, {
+        content,
+        is_active: isActive,
+      });
       showToast('Contenu de la landing enregistré');
     } catch (e) {
       showToast(e instanceof Error ? e.message : 'Erreur de sauvegarde', 'error');
