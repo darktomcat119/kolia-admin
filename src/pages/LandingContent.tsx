@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
 import { api } from '../lib/api';
 
@@ -114,21 +113,6 @@ function isLikelyUrl(value: string) {
   return v.startsWith('http://') || v.startsWith('https://');
 }
 
-function normalizeUrlArray(value: unknown): string[] {
-  if (Array.isArray(value)) return value.filter((x): x is string => typeof x === 'string' && !!x.trim());
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value) as unknown;
-      if (Array.isArray(parsed)) return parsed.filter((x): x is string => typeof x === 'string' && !!x.trim());
-    } catch {
-      return value
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-    }
-  }
-  return [];
-}
 
 async function getImageMeta(url: string): Promise<{ width: number; height: number } | null> {
   return await new Promise((resolve) => {
@@ -227,49 +211,8 @@ export function LandingContent() {
   const loadMediaLibrary = async () => {
     setMediaLoading(true);
     try {
-      const [{ data: restaurants, error: rErr }, { data: dishes, error: dErr }] = await Promise.all([
-        supabase.from('restaurants').select('id, name, image_url, gallery_urls').order('name'),
-        supabase.from('menu_items').select('id, name, image_url, restaurant_id').order('name'),
-      ]);
-      if (rErr) throw rErr;
-      if (dErr) throw dErr;
-
-      const restaurantMap = new Map<string, string>();
-      const assets: MediaAsset[] = [];
-
-      for (const r of (restaurants ?? []) as Array<{ id: string; name: string; image_url: string | null; gallery_urls: unknown }>) {
-        restaurantMap.set(r.id, r.name);
-        if (r.image_url) {
-          assets.push({
-            id: `restaurant-${r.id}`,
-            type: 'restaurant',
-            label: r.name,
-            source: 'Restaurant cover',
-            url: r.image_url,
-          });
-        }
-        for (const g of normalizeUrlArray(r.gallery_urls)) {
-          assets.push({
-            id: `gallery-${r.id}-${g.slice(-12)}`,
-            type: 'gallery',
-            label: r.name,
-            source: 'Restaurant gallery',
-            url: g,
-          });
-        }
-      }
-
-      for (const d of (dishes ?? []) as Array<{ id: string; name: string; image_url: string | null; restaurant_id: string | null }>) {
-        if (!d.image_url) continue;
-        assets.push({
-          id: `dish-${d.id}`,
-          type: 'dish',
-          label: d.name,
-          source: restaurantMap.get(d.restaurant_id ?? '') ?? 'Dish image',
-          url: d.image_url,
-        });
-      }
-      setMediaAssets(assets);
+      const assets = await api.get<MediaAsset[]>('/api/admin/landing-content/media-library');
+      setMediaAssets(assets ?? []);
     } catch (e) {
       showToast(e instanceof Error ? e.message : 'Failed to load media library', 'error');
     } finally {
