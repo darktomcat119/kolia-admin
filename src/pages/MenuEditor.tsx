@@ -16,6 +16,8 @@ interface ItemFormState {
   price: number;
   image_url: string;
   is_available: boolean;
+  is_popular: boolean;
+  popular_rank: number | null;
   dietary_tags: DietaryTag[];
   sort_order: number;
 }
@@ -26,6 +28,8 @@ const EMPTY_ITEM: ItemFormState = {
   price: 0,
   image_url: '',
   is_available: true,
+  is_popular: false,
+  popular_rank: null,
   dietary_tags: [],
   sort_order: 0,
 };
@@ -194,6 +198,21 @@ export function MenuEditor() {
     }
   };
 
+  const handleTogglePopular = async (itemId: string, current: boolean) => {
+    try {
+      await api.patch(`/api/admin/items/${itemId}`, {
+        is_popular: !current,
+      });
+      setItems((prev) =>
+        prev.map((i) =>
+          i.id === itemId ? { ...i, is_popular: !current } : i,
+        ),
+      );
+    } catch (err) {
+      console.error('Failed to toggle popular:', err);
+    }
+  };
+
   const itemImageInputRef = useRef<HTMLInputElement>(null);
   const [uploadingItemImage, setUploadingItemImage] = useState(false);
   const [blobPreviewUrl, setBlobPreviewUrl] = useState<string | null>(null);
@@ -279,6 +298,8 @@ export function MenuEditor() {
       price: Number(item.price),
       image_url: item.image_url ?? '',
       is_available: item.is_available,
+      is_popular: item.is_popular ?? false,
+      popular_rank: item.popular_rank ?? null,
       dietary_tags: item.dietary_tags ?? [],
       sort_order: item.sort_order,
     });
@@ -631,6 +652,55 @@ export function MenuEditor() {
                       </div>
                     </div>
 
+                    {/* Popular on landing page */}
+                    <div className="rounded-xl border border-border-light bg-[#FAFAF7]/80 p-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="font-body text-sm font-medium text-[#3D3A37]">
+                            Populaire sur la page d&apos;accueil
+                          </p>
+                          <p className="font-body text-xs text-[#9C9690] mt-0.5">
+                            Ce plat apparaîtra dans la section &laquo;&nbsp;Populaires&nbsp;&raquo; du site client.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setItemForm((p) => ({ ...p, is_popular: !p.is_popular }))}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
+                            itemForm.is_popular ? 'bg-primary' : 'bg-[#D8D5D0]'
+                          }`}
+                          role="switch"
+                          aria-checked={itemForm.is_popular}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                              itemForm.is_popular ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      {itemForm.is_popular && (
+                        <div className="mt-3">
+                          <label className="block font-body text-xs font-medium text-[#6B6560] mb-1">
+                            Rang d&apos;affichage (optionnel)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={itemForm.popular_rank ?? ''}
+                            onChange={(e) =>
+                              setItemForm((p) => ({
+                                ...p,
+                                popular_rank: e.target.value ? Number(e.target.value) : null,
+                              }))
+                            }
+                            placeholder="1, 2, 3…"
+                            className="w-32 px-3 py-2 rounded-xl border border-border font-body text-sm focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     {/* Actions */}
                     <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                       <button
@@ -686,6 +756,9 @@ export function MenuEditor() {
                           Disponible
                         </th>
                         <th className="text-left p-4 text-sm font-medium text-[#6B6560] font-body">
+                          Populaire
+                        </th>
+                        <th className="text-left p-4 text-sm font-medium text-[#6B6560] font-body">
                           Actions
                         </th>
                       </tr>
@@ -733,6 +806,20 @@ export function MenuEditor() {
                               }`}
                             >
                               {item.is_available ? 'Oui' : 'Non'}
+                            </button>
+                          </td>
+                          <td className="p-4">
+                            <button
+                              onClick={() =>
+                                handleTogglePopular(item.id, item.is_popular ?? false)
+                              }
+                              className={`px-3 py-1 rounded-full text-xs font-body ${
+                                item.is_popular
+                                  ? 'bg-[#FEF3C7] text-[#B45309]'
+                                  : 'bg-surface-hover text-[#A39E98]'
+                              }`}
+                            >
+                              {item.is_popular ? '★ Oui' : 'Non'}
                             </button>
                           </td>
                           <td className="p-4">

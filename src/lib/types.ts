@@ -75,6 +75,8 @@ export interface MenuItem {
   price: number;
   image_url: string | null;
   is_available: boolean;
+  is_popular: boolean;
+  popular_rank: number | null;
   dietary_tags: DietaryTag[];
   sort_order: number;
   created_at: string;
