@@ -5,6 +5,8 @@ import { api } from '../lib/api';
 
 type Locale = 'en' | 'fr' | 'pt';
 type MediaType = 'all' | 'restaurant' | 'dish' | 'gallery';
+type CuisineChip = { id: string; label: string };
+
 type LandingContentType = {
   hero: {
     badge: string;
@@ -14,6 +16,7 @@ type LandingContentType = {
     ctaTrack: string;
   };
   sections: {
+    cuisineChips: CuisineChip[];
     featuredTitle: string;
     featuredSubtitle: string;
     liveStatusTitle: string;
@@ -31,6 +34,17 @@ type LandingContentType = {
     ctaSecondary: string;
   };
 };
+
+const ALL_CUISINE_IDS: CuisineChip[] = [
+  { id: 'all', label: 'All' },
+  { id: 'west_african', label: 'West African' },
+  { id: 'congolese', label: 'Congolese' },
+  { id: 'north_african', label: 'North African' },
+  { id: 'central_african', label: 'Central African' },
+  { id: 'southern_african', label: 'Southern African' },
+  { id: 'lusophone_african', label: 'Lusophone' },
+  { id: 'pan_african', label: 'Pan-African' },
+];
 type MediaAsset = {
   id: string;
   type: Exclude<MediaType, 'all'>;
@@ -64,6 +78,7 @@ const DEFAULT_TEMPLATE: LandingContentType = {
     ctaTrack: 'Track order',
   },
   sections: {
+    cuisineChips: ALL_CUISINE_IDS,
     featuredTitle: 'Featured near you',
     featuredSubtitle: 'Hand-picked restaurants with signature dishes.',
     liveStatusTitle: 'Live status',
@@ -546,6 +561,96 @@ export function LandingContent() {
               <input value={content.sections.ctaSubtitle} onChange={(e) => updateSections('ctaSubtitle', e.target.value)} placeholder="Bottom CTA subtitle" className="w-full rounded-xl border border-[#E5E3E0] px-3 py-2 text-sm sm:col-span-2" />
               <input value={content.sections.ctaPrimary} onChange={(e) => updateSections('ctaPrimary', e.target.value)} placeholder="Bottom CTA primary button" className="w-full rounded-xl border border-[#E5E3E0] px-3 py-2 text-sm" />
               <input value={content.sections.ctaSecondary} onChange={(e) => updateSections('ctaSecondary', e.target.value)} placeholder="Bottom CTA secondary button" className="w-full rounded-xl border border-[#E5E3E0] px-3 py-2 text-sm" />
+            </div>
+
+            <div className="rounded-xl border border-[#E5E3E0] p-3">
+              <p className="mb-1 text-xs font-semibold text-[#9C9690]">Cuisine filter chips</p>
+              <p className="mb-3 text-[11px] text-[#B0ABA5]">
+                Controls which cuisine filters appear in the hero. IDs must match database values — only edit labels.
+              </p>
+              <div className="space-y-2">
+                {(content.sections.cuisineChips ?? []).map((chip, i) => (
+                  <div key={chip.id} className="flex items-center gap-2">
+                    <span className="w-32 shrink-0 rounded-lg bg-[#F5F3F0] px-2 py-1.5 font-mono text-[11px] text-[#6B6560]">
+                      {chip.id}
+                    </span>
+                    <input
+                      value={chip.label}
+                      onChange={(e) =>
+                        updateSections(
+                          'cuisineChips',
+                          (content.sections.cuisineChips ?? []).map((c, idx) =>
+                            idx === i ? { ...c, label: e.target.value } : c,
+                          ),
+                        )
+                      }
+                      placeholder="Label"
+                      className="flex-1 rounded-lg border border-[#E5E3E0] px-3 py-1.5 text-xs focus:border-primary focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      disabled={i === 0}
+                      onClick={() => {
+                        const chips = [...(content.sections.cuisineChips ?? [])];
+                        [chips[i - 1], chips[i]] = [chips[i], chips[i - 1]];
+                        updateSections('cuisineChips', chips);
+                      }}
+                      className="rounded-lg border border-[#E5E3E0] px-2 py-1.5 text-[11px] font-semibold text-[#6B6560] disabled:opacity-30"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      disabled={i === (content.sections.cuisineChips ?? []).length - 1}
+                      onClick={() => {
+                        const chips = [...(content.sections.cuisineChips ?? [])];
+                        [chips[i], chips[i + 1]] = [chips[i + 1], chips[i]];
+                        updateSections('cuisineChips', chips);
+                      }}
+                      className="rounded-lg border border-[#E5E3E0] px-2 py-1.5 text-[11px] font-semibold text-[#6B6560] disabled:opacity-30"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      disabled={(content.sections.cuisineChips ?? []).length <= 1}
+                      onClick={() =>
+                        updateSections(
+                          'cuisineChips',
+                          (content.sections.cuisineChips ?? []).filter((_, idx) => idx !== i),
+                        )
+                      }
+                      className="rounded-lg border border-[#E5E3E0] px-2 py-1.5 text-[11px] font-semibold text-[#DC2626] disabled:opacity-30"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {(() => {
+                const activeIds = new Set((content.sections.cuisineChips ?? []).map((c) => c.id));
+                const available = ALL_CUISINE_IDS.filter((c) => !activeIds.has(c.id));
+                if (!available.length) return null;
+                return (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {available.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() =>
+                          updateSections('cuisineChips', [
+                            ...(content.sections.cuisineChips ?? []),
+                            { id: c.id, label: c.label },
+                          ])
+                        }
+                        className="rounded-full border border-dashed border-[#D8D5D0] px-3 py-1 text-[11px] font-semibold text-[#9C9690] hover:border-primary hover:text-primary"
+                      >
+                        + {c.id}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="rounded-xl border border-[#E5E3E0] p-3">
